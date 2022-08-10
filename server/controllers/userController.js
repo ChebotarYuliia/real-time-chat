@@ -78,3 +78,17 @@ module.exports.getAllUsers = async (req, res, next) => {
         next(ex);
     };
 };
+
+module.exports.setSettings = async (req, res, next) => {
+    try {
+        const { newUserName } = req.body;
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            { username: newUserName },
+            { new: true },
+        );
+        return res.json({ status: true, user });
+    } catch (ex) {
+        next(ex);
+    }
+};
