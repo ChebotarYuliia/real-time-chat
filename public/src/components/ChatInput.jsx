@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Picker from 'emoji-picker-react';
 import { IoMdSend } from 'react-icons/io';
@@ -6,8 +6,10 @@ import { BsEmojiSmileFill } from 'react-icons/bs';
 
 
 export default function ChatInput({ handleSendMsg }) {
+    const inputRef = useRef(null);
     const [msg, setMsg] = useState('');
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [cursorPosition, setCursorPosition] = useState(null);
 
     useEffect(() => {
         const handleDocumentClick = event => {
@@ -26,13 +28,22 @@ export default function ChatInput({ handleSendMsg }) {
     }, []);
 
     const handleEmojiPickerhideShow = () => {
+        inputRef.current.focus();
         setShowEmojiPicker(!showEmojiPicker);
     };
 
+    useEffect(() => {
+        inputRef.current.selectionEnd = cursorPosition;
+    }, [cursorPosition]);
+
     const handleEmojiClick = (event, emojiObject) => {
-        let message = msg;
-        message += emojiObject.emoji;
+        const ref = inputRef.current;
+        ref.focus();
+        const start = msg.substring(0, ref.selectionStart);
+        const end = msg.substring(ref.selectionEnd);
+        const message = start + emojiObject.emoji + end;
         setMsg(message);
+        setCursorPosition(start.length + emojiObject.emoji.length);
     };
 
     const sendChat = event => {
@@ -59,7 +70,9 @@ export default function ChatInput({ handleSendMsg }) {
                         type="text"
                         placeholder='type your message here'
                         value={msg}
-                        onChange={e => setMsg(e.target.value)} />
+                        onChange={e => setMsg(e.target.value)}
+                        ref={inputRef}
+                    />
                     <button className="submit">
                         <IoMdSend />
                     </button>
