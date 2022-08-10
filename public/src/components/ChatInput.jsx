@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Picker from 'emoji-picker-react';
 import { IoMdSend } from 'react-icons/io';
@@ -8,6 +8,22 @@ import { BsEmojiSmileFill } from 'react-icons/bs';
 export default function ChatInput({ handleSendMsg }) {
     const [msg, setMsg] = useState('');
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+    useEffect(() => {
+        const handleDocumentClick = event => {
+            const target = event.target;
+            if (target.closest('.emoji') || target.closest('.emoji-picker-react')) {
+                return;
+            } else {
+                if (showEmojiPicker) {
+                    handleEmojiPickerhideShow();
+                }
+            }
+        };
+
+        document.addEventListener('click', handleDocumentClick);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleEmojiPickerhideShow = () => {
         setShowEmojiPicker(!showEmojiPicker);
