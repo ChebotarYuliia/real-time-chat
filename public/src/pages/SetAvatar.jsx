@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { setAvatarRoute } from '../utils/APIRoutes';
-import { BsFillArrowLeftCircleFill } from 'react-icons/bs';
+import { BsFillArrowLeftCircleFill, BsArrowCounterclockwise } from 'react-icons/bs';
 
 export default function SetAvatar() {
     // const api = `https://api.multiavatar.com/4645646`;
@@ -58,21 +58,40 @@ export default function SetAvatar() {
     };
 
     useEffect(() => {
-        async function setAvatarImg() {
-            const data = [];
-            for (let i = 0; i < 4; i++) {
-                // const image = await axios.get(`${api}/${Math.round(Math.random() * 1000)}`);
-                const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-                const image = await axios.get(`${api}/${Math.round(Math.random() * 10000)}.svg?background=%23${randomColor}`);
-                const buffer = new Buffer.from(image.data.toString());
-                data.push(buffer.toString('base64'));
-            }
-            setAvatars(data);
-            setIsLoading(false);
-        };
-        setAvatarImg();
+        getAvatarImgs();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    async function getAvatarImgs() {
+        const data = [];
+
+        function getRandomColor() {
+            let letters = '0123456789ABCDEF';
+            let color = '';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        for (let i = 0; i < 4; i++) {
+            const randomColor = getRandomColor();
+            const image = await axios.get(`${api}/${Math.round(Math.random() * 10000)}.svg?background=%23${randomColor}`);
+            const buffer = new Buffer.from(image.data.toString());
+            data.push(buffer.toString('base64'));
+        }
+        setAvatars(data);
+        setIsLoading(false);
+    };
+
+    const handleRefresh = event => {
+        const target = event.currentTarget;
+        target.classList.add('animation');
+        setTimeout(() => {
+            target.classList.remove('animation');
+        }, 1000);
+        getAvatarImgs();
+    };
 
     return (
         <>
@@ -112,6 +131,9 @@ export default function SetAvatar() {
                                 </div>
                             );
                         })}
+                        <div className="refresh-btn" onClick={(e) => handleRefresh(e)}>
+                            <BsArrowCounterclockwise />
+                        </div>
                     </div>
                     <button onClick={setProfilePicture} className="submit-btn">
                         Set as Profile Picture
@@ -166,8 +188,9 @@ const Container = styled.div`
     }
     .avatars {
         display: flex;
+        align-items: center;
         gap: 2rem;
-
+        position: relative;
         .avatar {
         border: 0.4rem solid transparent;
         padding: 0.4rem;
@@ -187,6 +210,30 @@ const Container = styled.div`
         }
         .selected {
         border: 0.4rem solid #4e0eff;
+        }
+    }
+    .refresh-btn{
+        transition: all .3s;
+        cursor: pointer;
+        position: absolute;
+        right: -50px;
+        transform: rotate(0deg);
+        display: flex;
+        svg{
+            font-size: 30px;
+            color: #fff;
+        }
+    }
+    .animation{
+        animation: rotate-keyframes 1s;
+    }
+    @keyframes rotate-keyframes {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(-360deg);
         }
     }
     .submit-btn {
