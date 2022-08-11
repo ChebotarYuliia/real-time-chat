@@ -25,7 +25,7 @@ export default function ChatInput({ handleSendMsg }) {
 
         document.addEventListener('click', handleDocumentClick);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [showEmojiPicker]);
 
     const handleEmojiPickerhideShow = () => {
         inputRef.current.focus();
@@ -54,6 +54,11 @@ export default function ChatInput({ handleSendMsg }) {
         }
     };
 
+    const handleInputChange = event => {
+        const message = event.target.value;
+        setMsg(message);
+    };
+
     return (
         <>
             <Container>
@@ -66,12 +71,13 @@ export default function ChatInput({ handleSendMsg }) {
                     </div>
                 </div>
                 <form className="input-container" onSubmit={e => sendChat(e)}>
-                    <input
-                        type="text"
-                        placeholder='type your message here'
-                        value={msg}
-                        onChange={e => setMsg(e.target.value)}
+                    <textarea
+                        name="chat-main-input"
+                        id="chat-main-input"
+                        placeholder="Write a message..."
+                        onInput={handleInputChange}
                         ref={inputRef}
+                        value={msg}
                     />
                     <button className="submit">
                         <IoMdSend />
@@ -85,11 +91,11 @@ export default function ChatInput({ handleSendMsg }) {
 const Container = styled.div`
     display: flex;
     align-items: center;
-    /* grid-template-columns: 5% 95%; */
     justify-content: space-around;
-    background-color: #080420;
+    background-color: #ffffff34;
     padding: 0 2rem;
     gap: 1rem;
+    height: 15%;
     @media screen and (min-width: 720px) and (max-width: 1080px) {
         padding: 0 1rem;
     }
@@ -134,12 +140,39 @@ const Container = styled.div`
         }
     }
     .input-container {
-        width: 100%;
+        width: calc(100% - 1rem - 50px);
         border-radius: 2rem;
         display: flex;
         align-items: center;
         gap: 2rem;
-        background-color: #ffffff34;
+        #chat-main-input {
+            -moz-appearance: textfield;
+            -webkit-appearance: textfield;
+            display: inline-block;  
+            width: 90%;
+            background-color: transparent;
+            color: white;
+            border: none;
+            padding-left: 1.5rem;
+            font-size: 1rem;
+            padding-bottom: 10px;
+            padding-top: 10px;
+            max-height: 44.78px;
+            overflow-y: auto;
+            resize: none;
+            &::-webkit-scrollbar {
+                width: 0.2rem;
+                &-thumb {
+                    background-color: #ffffff39;
+                    width: 0.1rem;
+                    border-radius: 1rem;
+                }
+            }
+            &:focus{
+                border: none;
+                outline: none;
+            }
+        }
         input {
             width: 90%;
             height: 30px;
@@ -162,8 +195,9 @@ const Container = styled.div`
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #9a86f3;
+            background-color: transparent;
             border: none;
+            cursor: pointer;
             @media screen and (min-width: 720px) and (max-width: 1080px) {
                 padding: 0.4rem 1rem;
                 svg {

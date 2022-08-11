@@ -99,18 +99,24 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
 }
 
 const Container = styled.div`
-    display: grid;
-    grid-template-rows: 10% 80% 10%;
+    position: relative;
     gap: 0.1rem;
     overflow: hidden;
-    @media screen and (min-width: 720px) and (max-width: 1080px) {
-        grid-template-rows: 15% 70% 15%;
-    }
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     .chat-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 0 2rem;
+        background: #080420;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        height: 15%;
+        width: 100%;
         .user-details {
             display: flex;
             align-items: center;
@@ -134,6 +140,7 @@ const Container = styled.div`
         flex-direction: column;
         gap: 1rem;
         overflow: auto;
+        height: 70%;
         @media screen and (max-width: 720px) {
             padding: 1rem;
         }

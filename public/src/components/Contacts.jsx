@@ -97,7 +97,7 @@ const Container = styled.div`
         align-items: center;
         overflow: auto;
         gap: 0.8rem;
-            &::-webkit-scrollbar {
+        &::-webkit-scrollbar {
             width: 0.2rem;
             &-thumb {
                 background-color: #ffffff39;
@@ -200,7 +200,6 @@ const Container = styled.div`
             background-color: transparent;
             color: white;
             border: none;
-            /* padding-left: 1rem; */
             font-size: 1.2rem;
             border: none;
             outline: none;
@@ -220,18 +219,4 @@ const Container = styled.div`
                 }
             }
         }
-        /* @media screen and (max-width: 719px) {
-            gap: 0.5rem;
-            .avatar{
-                img{
-                    height: 2rem;
-                }
-            }
-            .username {
-                h2 {
-                    font-size: 1rem;
-                }
-            }
-        } */
-    /* } */
 `;
