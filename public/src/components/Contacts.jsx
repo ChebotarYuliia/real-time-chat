@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import Logo from '../assets/logo.svg';
 import ProfileSettingsBtn from './ProfileSettingsBtn';
 import ProfileSettings from './ProfileSettings';
+import { BsCircleFill } from 'react-icons/bs';
 
-export default function Contacts({ contacts, currentUser, changeChat, getCurrentUser }) {
+export default function Contacts({ contacts, currentUser, changeChat, getCurrentUser, onlineUsers }) {
     const [currentUserName, setCurrentUserName] = useState(undefined);
     const [currentUserImage, setCurrentUserImage] = useState(undefined);
     const [currentSelected, setCurrentSelected] = useState(undefined);
@@ -38,10 +39,14 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
                         <div className="contacts">
                             {
                                 contacts.map((contact, index) => {
+                                    console.log('contacts', onlineUsers)
                                     return (
                                         <div className={`contact ${index === currentSelected ? 'selected' : ''}`} key={index} onClick={() => changeCurrentChat(index, contact)}>
                                             <div className="avatar">
                                                 <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt="avatar" />
+                                                <div className={`status ${onlineUsers.includes(contact._id) ? 'online' : ''}`}>
+                                                    <BsCircleFill />
+                                                </div>
                                             </div>
                                             <div className="userName">
                                                 <h3>{contact.username}</h3>
@@ -117,9 +122,20 @@ const Container = styled.div`
             align-items: center;
             transition: 0.5s ease-in-out;
             .avatar {
+                position: relative;
                 img {
                     height: 3rem;
                     border-radius: 50%;
+                }
+                .status{
+                    position: absolute;
+                    color: #919191;
+                    font-size: .8rem;
+                    bottom: -1px;
+                    right: 4px;
+                    &.online{
+                        color: #4e0eff;
+                    }
                 }
             }
             .username {

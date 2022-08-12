@@ -15,6 +15,7 @@ function Chat() {
     const [currentUser, setCurrentUser] = useState(undefined);
     const [currentChat, setCurrentChat] = useState(undefined);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [onlineUsers, setOnlineUsers] = useState([]);
 
     useEffect(() => {
         getCurrentUser();
@@ -33,7 +34,11 @@ function Chat() {
     useEffect(() => {
         if (currentUser) {
             socket.current = io(host);
-            socket.current.emit('add-user', currentUser._id)
+            socket.current.emit('add-user', currentUser._id);
+            socket.current.on('user-connetion', users => {
+                console.log('chat useEffect f', users)
+                setOnlineUsers(users);
+            })
         }
     }, [currentUser]);
 
@@ -58,11 +63,11 @@ function Chat() {
     return (
         <Container>
             <div className="container">
-                <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} getCurrentUser={getCurrentUser} />
+                <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} getCurrentUser={getCurrentUser} onlineUsers={onlineUsers} />
                 {isLoaded && currentChat === undefined ? (
                     <Welcome currentUser={currentUser} />
                 ) : (
-                    <ChatContainer currentUser={currentUser} currentChat={currentChat} socket={socket} />
+                    <ChatContainer currentUser={currentUser} currentChat={currentChat} socket={socket} onlineUsers={onlineUsers} />
                 )}
             </div>
         </Container>

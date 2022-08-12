@@ -38,18 +38,29 @@ const io = socket(server, {
     }
 });
 
-global.onlineUsers = new Map();
+const onlineUsers = {};
 
 io.on("connection", (socket) => {
     global.chatSocket = socket;
+    socket.sendBuffer = [];
 
     socket.on("add-user", (userId) => {
-        global.onlineUsers.set(userId, socket.id);
+        onlineUsers[userId] = socket.id;
+        io.emit('user-connetion', Object.keys(onlineUsers));
+        console.log(`add-user ${socket.id}`, onlineUsers);
     });
     socket.on("send-msg", (data) => {
-        const sendUserSocket = onlineUsers.get(data.to);
+        const sendUserSocket = onlineUsers[data.to];
         if (sendUserSocket) {
             socket.to(sendUserSocket).emit("msg-receive", data.message);
         }
+    });
+    socket.on('disconnect', () => {
+        const i = Object.keys(onlineUsers).find(key => {
+            return onlineUsers[key] == socket.id;
+        });
+        delete onlineUsers[i];
+        io.emit('user-connetion', Object.keys(onlineUsers));
+        console.log(`User ${socket.id} diconnected`);
     });
 });
