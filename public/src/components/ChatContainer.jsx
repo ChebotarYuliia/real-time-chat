@@ -91,7 +91,7 @@ export default function ChatContainer({ currentChat, currentUser, socket, online
                                 })
                             }
                         </div>
-                        <ChatInput handleSendMsg={handleSendMsg} />
+                        <ChatInput handleSendMsg={handleSendMsg} currentChat={currentChat} />
                     </Container>
                 )
             }

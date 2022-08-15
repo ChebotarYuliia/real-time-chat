@@ -5,11 +5,11 @@ import { IoMdSend } from 'react-icons/io';
 import { BsEmojiSmileFill } from 'react-icons/bs';
 
 
-export default function ChatInput({ handleSendMsg }) {
+export default function ChatInput({ handleSendMsg, currentChat }) {
     const inputRef = useRef(null);
-    const [msg, setMsg] = useState('');
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [cursorPosition, setCursorPosition] = useState(null);
+    const [chatsInputValues, setChatsInputValues] = useState({});
 
     useEffect(() => {
         const handleDocumentClick = event => {
@@ -27,6 +27,15 @@ export default function ChatInput({ handleSendMsg }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showEmojiPicker]);
 
+    useEffect(() => {
+        if (currentChat) {
+            if (!chatsInputValues[currentChat._id]) {
+                chatsInputValues[currentChat._id] = '';
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentChat]);
+
     const handleEmojiPickerhideShow = () => {
         inputRef.current.focus();
         setShowEmojiPicker(!showEmojiPicker);
@@ -38,25 +47,27 @@ export default function ChatInput({ handleSendMsg }) {
 
     const handleEmojiClick = (event, emojiObject) => {
         const ref = inputRef.current;
+        const msg = chatsInputValues[currentChat._id];
         ref.focus();
         const start = msg.substring(0, ref.selectionStart);
         const end = msg.substring(ref.selectionEnd);
         const message = start + emojiObject.emoji + end;
-        setMsg(message);
+        setChatsInputValues({ ...chatsInputValues, [currentChat._id]: message });
         setCursorPosition(start.length + emojiObject.emoji.length);
     };
 
     const sendChat = event => {
         event.preventDefault();
+        const msg = chatsInputValues[currentChat._id];
         if (msg.length > 0) {
             handleSendMsg(msg);
-            setMsg('');
+            setChatsInputValues({ ...chatsInputValues, [currentChat._id]: '' });
         }
     };
 
     const handleInputChange = event => {
-        const message = event.target.value;
-        setMsg(message);
+        const value = event.target.value;
+        setChatsInputValues({ ...chatsInputValues, [currentChat._id]: value });
     };
 
     return (
@@ -77,7 +88,7 @@ export default function ChatInput({ handleSendMsg }) {
                         placeholder="Write a message..."
                         onInput={handleInputChange}
                         ref={inputRef}
-                        value={msg}
+                        value={chatsInputValues[currentChat._id]}
                     />
                     <button className="submit">
                         <IoMdSend />
