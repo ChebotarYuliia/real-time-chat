@@ -25,7 +25,12 @@ const userSchema = mongoose.Schema({
     avatarImage: {
         type: String,
         default: '',
+    },
+    contacts: {
+        type: Array,
+        default: [],
     }
 });
 
+// userSchema.index({ username: 'text', email: 'text' });
 module.exports = mongoose.model('Users', userSchema);

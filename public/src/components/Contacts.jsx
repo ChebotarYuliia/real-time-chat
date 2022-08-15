@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { searchForUsers, addNewContact } from "../utils/APIRoutes";
 import styled from 'styled-components';
 import Logo from '../assets/logo.svg';
 import ProfileSettingsBtn from './ProfileSettingsBtn';
 import ProfileSettings from './ProfileSettings';
 import { BsCircleFill } from 'react-icons/bs';
 
-export default function Contacts({ contacts, currentUser, changeChat, getCurrentUser, onlineUsers }) {
+export default function Contacts({ contacts, currentUser, changeChat, getCurrentUser, onlineUsers, getContacts }) {
     const [currentUserName, setCurrentUserName] = useState(undefined);
     const [currentUserImage, setCurrentUserImage] = useState(undefined);
     const [currentSelected, setCurrentSelected] = useState(undefined);
     const [profileSettingsIsOn, setProfileSettingsIsOn] = useState(false);
+    const [searchInput, setSearchInput] = useState('');
+    const [timeOutId, setTimeOutId] = useState(undefined);
+    const [foundContacts, setFoundContacts] = useState([]);
+    const [noUserFound, setNoUserFound] = useState(false);
 
     useEffect(() => {
         if (currentUser) {
@@ -27,6 +33,51 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
         setProfileSettingsIsOn(!profileSettingsIsOn);
     };
 
+    const findUsersInDB = async (value) => {
+        if (value && value !== '' && value.length > 0) {
+            const { data } = await axios.get(`${searchForUsers}/${currentUser._id}/${value}`);
+            if (data.status) {
+                setFoundContacts(data.users);
+                setNoUserFound(false);
+            } else {
+                setFoundContacts([]);
+                setNoUserFound(true);
+            }
+        }
+    };
+
+    let timer;
+    const handleSearchInput = event => {
+        const value = event.target.value;
+        setSearchInput(value);
+
+        clearTimeout(timeOutId);
+        setTimeOutId(undefined);
+
+        if (value) {
+            timer = setTimeout(async () => {
+                await findUsersInDB(value);
+            }, 800);
+        } else {
+            setNoUserFound(false);
+            setFoundContacts([]);
+        };
+
+        setTimeOutId(timer);
+    };
+
+    const handleAddToContacts = async (contact) => {
+        const { data } = await axios.post(`${addNewContact}/${currentUser._id}`, {
+            contact
+        });
+        if (data.status) {
+            setFoundContacts([]);
+            setSearchInput('');
+            setNoUserFound(false);
+            getContacts();
+        };
+    };
+
     return (
         <>
             {
@@ -37,9 +88,54 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
                             <h3>snappy</h3>
                         </div>
                         <div className="contacts">
+                            <div className="search-contact">
+                                <input
+                                    type="text"
+                                    placeholder='Search here for users'
+                                    onChange={handleSearchInput}
+                                    value={searchInput}
+                                    autoFocus={true}
+                                />
+                            </div>
+                            {
+                                !!foundContacts?.length && (
+                                    <div className="contacts-search-result">
+                                        {
+                                            foundContacts.map((contact, index) => {
+                                                return (
+                                                    <div className={`contact`} key={index}>
+                                                        <div className="avatar">
+                                                            <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt="avatar" />
+                                                            <div className={`status ${onlineUsers.includes(contact._id) ? 'online' : ''}`}>
+                                                                <BsCircleFill />
+                                                            </div>
+                                                        </div>
+                                                        <div className="userName">
+                                                            <h3>{contact.username}</h3>
+                                                        </div>
+                                                        {
+                                                            (contacts.find(data => data._id === contact._id) === undefined) && (
+                                                                <div className="add-to-contacts" onClick={() => handleAddToContacts(contact)}>
+                                                                    Add
+                                                                </div>
+                                                            )
+                                                        }
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                )
+                            }
+                            {
+                                noUserFound && (
+                                    <div className="contacts-search-result">
+                                        <p className="no-user-found">No such user</p>
+                                    </div>
+                                )
+                            }
                             {
                                 contacts.map((contact, index) => {
-                                    console.log('contacts', onlineUsers)
                                     return (
                                         <div className={`contact ${index === currentSelected ? 'selected' : ''}`} key={index} onClick={() => changeCurrentChat(index, contact)}>
                                             <div className="avatar">
@@ -108,6 +204,41 @@ const Container = styled.div`
                 background-color: #ffffff39;
                 width: 0.1rem;
                 border-radius: 1rem;
+            }
+        }
+        .search-contact{
+            width: 100%;
+            input{
+                border: none;
+                outline: none;
+                color: #fff;
+                padding: .5rem 1rem;
+                font-size: .9rem;
+                background: transparent;
+                width: 100%;
+            }
+        }
+        .add-to-contacts{
+            color: #0a0a13;
+            font-size: 1rem;
+            padding: 0.3rem;
+            background: #4e0eff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all .3s;
+            margin-left: auto;
+        }
+        .contacts-search-result{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            width: 100%;
+            padding-bottom: .8rem;
+            border-bottom: 1px solid grey;
+            .no-user-found{
+                color: grey;
+                font-style: italic;
             }
         }
         .contact {

@@ -36,25 +36,25 @@ function Chat() {
             socket.current = io(host);
             socket.current.emit('add-user', currentUser._id);
             socket.current.on('user-connetion', users => {
-                console.log('chat useEffect f', users)
                 setOnlineUsers(users);
             })
         }
     }, [currentUser]);
 
     useEffect(() => {
-        async function getContacts() {
-            if (currentUser) {
-                if (currentUser.isAvatarImageSet) {
-                    const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
-                    setContacts(data.data);
-                } else {
-                    navigate('/setavatar');
-                }
-            };
-        };
         getContacts();
     }, [currentUser]);
+
+    async function getContacts() {
+        if (currentUser) {
+            if (currentUser.isAvatarImageSet) {
+                const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
+                setContacts(data.data);
+            } else {
+                navigate('/setavatar');
+            }
+        };
+    };
 
     const handleChatChange = (chat) => {
         setCurrentChat(chat);
@@ -63,7 +63,7 @@ function Chat() {
     return (
         <Container>
             <div className="container">
-                <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} getCurrentUser={getCurrentUser} onlineUsers={onlineUsers} />
+                <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} getCurrentUser={getCurrentUser} onlineUsers={onlineUsers} getContacts={getContacts} />
                 {isLoaded && currentChat === undefined ? (
                     <Welcome currentUser={currentUser} />
                 ) : (

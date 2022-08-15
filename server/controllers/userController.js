@@ -70,10 +70,8 @@ module.exports.setAvatar = async (req, res, next) => {
 
 module.exports.getAllUsers = async (req, res, next) => {
     try {
-        const users = await User.find({ _id: { $ne: req.params.id } }).select([
-            "email", "username", "avatarImage", "_id"
-        ]);
-        return res.json(users);
+        const user = await User.findOne({ _id: req.params.id });
+        return res.json(user.contacts);
     } catch (ex) {
         next(ex);
     };
@@ -91,4 +89,39 @@ module.exports.setSettings = async (req, res, next) => {
     } catch (ex) {
         next(ex);
     }
+};
+
+module.exports.searchForUsers = async (req, res, next) => {
+    try {
+        const users = await User.find({
+            _id: { $ne: req.params.id },
+            username: { $regex: new RegExp('.*' + req.params.value + '.*', 'i') },
+        }).select([
+            "username", "avatarImage", "_id"
+        ]);;
+        if (users.length > 0) {
+            return res.json({ status: true, users });
+        } else {
+            return res.json({ status: false, msg: 'No such user' });
+        }
+    } catch (ex) {
+        next(ex);
+    }
+}
+
+module.exports.addNewContact = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const newContact = req.body.contact;
+        const userData = await User.findByIdAndUpdate(
+            userId,
+            {
+                $push: { contacts: newContact }
+            },
+            { new: true },
+        );
+        return res.json({ status: true, userData });
+    } catch (ex) {
+        next(ex)
+    };
 };
