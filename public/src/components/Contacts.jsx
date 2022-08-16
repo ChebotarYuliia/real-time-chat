@@ -4,10 +4,11 @@ import { searchForUsers, addNewContact } from "../utils/APIRoutes";
 import styled from 'styled-components';
 import Logo from '../assets/logo.svg';
 import ProfileSettingsBtn from './ProfileSettingsBtn';
+import ContactsContextMenu from './ContactsContextMenu';
 import ProfileSettings from './ProfileSettings';
 import { BsCircleFill } from 'react-icons/bs';
 
-export default function Contacts({ contacts, currentUser, changeChat, getCurrentUser, onlineUsers, getContacts }) {
+export default function Contacts({ contacts, currentUser, changeChat, getCurrentUser, onlineUsers, getContacts, deleteChatFromContacts }) {
     const [currentUserName, setCurrentUserName] = useState(undefined);
     const [currentUserImage, setCurrentUserImage] = useState(undefined);
     const [currentSelected, setCurrentSelected] = useState(undefined);
@@ -78,6 +79,10 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
         };
     };
 
+    const handleDeleteChat = (id) => {
+        deleteChatFromContacts(id);
+    };
+
     return (
         <>
             {
@@ -134,23 +139,26 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
                                     </div>
                                 )
                             }
-                            {
-                                contacts.map((contact, index) => {
-                                    return (
-                                        <div className={`contact ${index === currentSelected ? 'selected' : ''}`} key={index} onClick={() => changeCurrentChat(index, contact)}>
-                                            <div className="avatar">
-                                                <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt="avatar" />
-                                                <div className={`status ${onlineUsers.includes(contact._id) ? 'online' : ''}`}>
-                                                    <BsCircleFill />
+                            <div className="contacts" id="user-contact-list">
+                                <ContactsContextMenu targetId='user-contact-list' handleDeleteChat={handleDeleteChat} currentUser={currentUser} />
+                                {
+                                    contacts.map((contact, index) => {
+                                        return (
+                                            <div className={`contact ${index === currentSelected ? 'selected' : ''}`} key={index} onClick={() => changeCurrentChat(index, contact)} data-id={contact._id}>
+                                                <div className="avatar">
+                                                    <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt="avatar" />
+                                                    <div className={`status ${onlineUsers.includes(contact._id) ? 'online' : ''}`}>
+                                                        <BsCircleFill />
+                                                    </div>
+                                                </div>
+                                                <div className="userName">
+                                                    <h3>{contact.username}</h3>
                                                 </div>
                                             </div>
-                                            <div className="userName">
-                                                <h3>{contact.username}</h3>
-                                            </div>
-                                        </div>
-                                    )
-                                })
-                            }
+                                        )
+                                    })
+                                }
+                            </div>
                         </div>
                         {
                             profileSettingsIsOn ? (
@@ -198,6 +206,7 @@ const Container = styled.div`
         align-items: center;
         overflow: auto;
         gap: 0.8rem;
+        width: 100%;
         &::-webkit-scrollbar {
             width: 0.2rem;
             &-thumb {

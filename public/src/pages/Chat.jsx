@@ -61,10 +61,17 @@ function Chat() {
         setCurrentChat(chat);
     };
 
+    const deleteChatFromContacts = (id) => {
+        if (id == currentChat._id) {
+            setCurrentChat(undefined);
+        }
+        getContacts();
+    };
+
     return (
         <Container>
             <div className="container">
-                <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} getCurrentUser={getCurrentUser} onlineUsers={onlineUsers} getContacts={getContacts} />
+                <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} getCurrentUser={getCurrentUser} onlineUsers={onlineUsers} getContacts={getContacts} deleteChatFromContacts={deleteChatFromContacts} />
                 {isLoaded && currentChat === undefined ? (
                     <Welcome currentUser={currentUser} />
                 ) : (

@@ -71,7 +71,6 @@ module.exports.setAvatar = async (req, res, next) => {
 module.exports.getAllUsers = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id);
-        console.log(user.contacts)
         let contacts = [];
         for (let contact of user.contacts) {
             const user = await User.findById(contact).select([
@@ -121,7 +120,6 @@ module.exports.addNewContact = async (req, res, next) => {
     try {
         const userId = req.params.id;
         const newContact = req.body.contact;
-        console.log(newContact);
         const userData = await User.findByIdAndUpdate(
             userId,
             {
@@ -133,4 +131,22 @@ module.exports.addNewContact = async (req, res, next) => {
     } catch (ex) {
         next(ex)
     };
+};
+
+module.exports.deleteUserFromContacts = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findByIdAndUpdate(
+            userId,
+            {
+                $pull: { 'contacts': req.body.id },
+            },
+            { new: true },
+        );
+        if (user) {
+            return res.json({ status: true });
+        };
+    } catch (ex) {
+        next(ex);
+    }
 };

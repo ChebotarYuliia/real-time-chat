@@ -6,5 +6,6 @@ export const allUsersRoute = `${host}/api/auth/allusers`;
 export const settingsRoute = `${host}/api/auth/setsettings`;
 export const searchForUsers = `${host}/api/auth/searchforusers`;
 export const addNewContact = `${host}/api/auth/addnewcontact`;
+export const deleteUserFromContacts = `${host}/api/auth/deleteuserfromcontacts`;
 export const sendMessageRoute = `${host}/api/messages/addmsg`;
 export const getAllMessagesRoute = `${host}/api/messages/getmsg`;
