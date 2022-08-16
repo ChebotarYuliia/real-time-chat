@@ -62,7 +62,7 @@ function Chat() {
     };
 
     const deleteChatFromContacts = (id) => {
-        if (id == currentChat._id) {
+        if (id === currentChat._id) {
             setCurrentChat(undefined);
         }
         getContacts();

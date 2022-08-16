@@ -25,8 +25,8 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
         }
     }, [currentUser]);
 
-    const changeCurrentChat = (index, contact) => {
-        setCurrentSelected(index);
+    const changeCurrentChat = (contact) => {
+        setCurrentSelected(contact._id);
         changeChat(contact)
     };
 
@@ -108,7 +108,11 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
                                         {
                                             foundContacts.map((contact, index) => {
                                                 return (
-                                                    <div className={`contact`} key={index}>
+                                                    <div
+                                                        className={`contact ${contact._id === currentSelected ? 'selected' : ''}`}
+                                                        onClick={() => changeCurrentChat(contact)}
+                                                        key={index}
+                                                    >
                                                         <div className="avatar">
                                                             <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt="avatar" />
                                                             <div className={`status ${onlineUsers.includes(contact._id) ? 'online' : ''}`}>
@@ -144,7 +148,7 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
                                 {
                                     contacts.map((contact, index) => {
                                         return (
-                                            <div className={`contact ${index === currentSelected ? 'selected' : ''}`} key={index} onClick={() => changeCurrentChat(index, contact)} data-id={contact._id}>
+                                            <div className={`contact ${contact._id === currentSelected ? 'selected' : ''}`} key={index} onClick={() => changeCurrentChat(contact)} data-id={contact._id}>
                                                 <div className="avatar">
                                                     <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt="avatar" />
                                                     <div className={`status ${onlineUsers.includes(contact._id) ? 'online' : ''}`}>
