@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
-// import styled from 'styled-components';
 import { BsFillCameraFill } from 'react-icons/bs';
 import axios from 'axios';
-import { settingsRoute } from '../utils/APIRoutes';
+import { settingsRoute, host } from '../utils/APIRoutes';
+import { io } from 'socket.io-client';
 
 export default function ProfileSettings({ currentUserName, currentUserImage, handleProfileSettingsIsOn, getCurrentUser }) {
+    const socket = useRef();
     const navigator = useNavigate();
     const [userName, setUserName] = useState(currentUserName);
 
@@ -32,6 +33,9 @@ export default function ProfileSettings({ currentUserName, currentUserImage, han
             localStorage.setItem('chat-app-user', JSON.stringify(data.user));
             handleProfileSettingsIsOn();
             getCurrentUser();
+
+            socket.current = io(host);
+            socket.current.emit('edit-user-profile', user._id);
             console.log('changed succesfully');
         } else {
             console.log('was an error');

@@ -70,8 +70,16 @@ module.exports.setAvatar = async (req, res, next) => {
 
 module.exports.getAllUsers = async (req, res, next) => {
     try {
-        const user = await User.findOne({ _id: req.params.id });
-        return res.json(user.contacts);
+        const user = await User.findById(req.params.id);
+        console.log(user.contacts)
+        let contacts = [];
+        for (let contact of user.contacts) {
+            const user = await User.findById(contact).select([
+                "username", "avatarImage", "_id"
+            ]);
+            contacts.push(user);
+        };
+        return res.json(contacts);
     } catch (ex) {
         next(ex);
     };
@@ -98,7 +106,7 @@ module.exports.searchForUsers = async (req, res, next) => {
             username: { $regex: new RegExp('.*' + req.params.value + '.*', 'i') },
         }).select([
             "username", "avatarImage", "_id"
-        ]);;
+        ]);
         if (users.length > 0) {
             return res.json({ status: true, users });
         } else {
@@ -113,6 +121,7 @@ module.exports.addNewContact = async (req, res, next) => {
     try {
         const userId = req.params.id;
         const newContact = req.body.contact;
+        console.log(newContact);
         const userData = await User.findByIdAndUpdate(
             userId,
             {

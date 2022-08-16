@@ -55,6 +55,9 @@ io.on("connection", (socket) => {
             socket.to(sendUserSocket).emit("msg-receive", data.message);
         }
     });
+    socket.on("edit-user-profile", (userId) => {
+        io.emit('update-user-profile', userId);
+    });
     socket.on('disconnect', () => {
         const i = Object.keys(onlineUsers).find(key => {
             return onlineUsers[key] == socket.id;

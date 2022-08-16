@@ -68,7 +68,7 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
 
     const handleAddToContacts = async (contact) => {
         const { data } = await axios.post(`${addNewContact}/${currentUser._id}`, {
-            contact
+            contact,
         });
         if (data.status) {
             setFoundContacts([]);
@@ -115,7 +115,7 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
                                                         </div>
                                                         {
                                                             (contacts.find(data => data._id === contact._id) === undefined) && (
-                                                                <div className="add-to-contacts" onClick={() => handleAddToContacts(contact)}>
+                                                                <div className="add-to-contacts" onClick={() => handleAddToContacts(contact._id)}>
                                                                     Add
                                                                 </div>
                                                             )

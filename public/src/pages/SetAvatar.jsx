@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Buffer } from "buffer";
 import styled from 'styled-components';
@@ -6,12 +6,14 @@ import loader from '../assets/loader.gif';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import { setAvatarRoute } from '../utils/APIRoutes';
+import { io } from 'socket.io-client';
+import { setAvatarRoute, host } from '../utils/APIRoutes';
 import { BsFillArrowLeftCircleFill, BsArrowCounterclockwise } from 'react-icons/bs';
 
 export default function SetAvatar() {
     // const api = `https://api.multiavatar.com/4645646`;
     const api = `https://avatars.dicebear.com/api/avataaars`;
+    const socket = useRef();
     const navigate = useNavigate();
     const [avatars, setAvatars] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -50,6 +52,10 @@ export default function SetAvatar() {
                 user.isAvatarImageSet = true;
                 user.avatarImage = data.image;
                 localStorage.setItem('chat-app-user', JSON.stringify(user));
+                if (avatartChange) {
+                    socket.current = io(host);
+                    socket.current.emit('edit-user-profile', user._id);
+                }
                 navigate('/');
             } else {
                 toast.error('Error setting avatar. Please try again', toastOptions);

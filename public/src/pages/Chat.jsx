@@ -37,7 +37,8 @@ function Chat() {
             socket.current.emit('add-user', currentUser._id);
             socket.current.on('user-connetion', users => {
                 setOnlineUsers(users);
-            })
+            });
+            socket.current.on('update-user-profile', () => getContacts());
         }
     }, [currentUser]);
 
