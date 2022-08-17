@@ -9,6 +9,7 @@ import { getAllMessagesRoute, sendMessageRoute } from '../utils/APIRoutes';
 export default function ChatContainer({ currentChat, currentUser, socket, onlineUsers }) {
     const [messages, setMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null);
+    // const [currentDay, setCurrentDay] = useState(null);
     const scrollRef = useRef();
 
     useEffect(() => {
@@ -27,7 +28,7 @@ export default function ChatContainer({ currentChat, currentUser, socket, online
     useEffect(() => {
         if (socket.current) {
             socket.current.on('msg-receive', msg => {
-                setArrivalMessage({ fromSelf: false, message: msg });
+                setArrivalMessage({ fromSelf: false, message: msg.msg, time: msg.time });
             })
         }
     }, []);
@@ -50,10 +51,55 @@ export default function ChatContainer({ currentChat, currentUser, socket, online
             to: currentChat._id,
             from: currentUser._id,
             message: msg,
+            time: new Date()
         });
         const msgs = [...messages];
-        msgs.push({ fromSelf: true, message: msg });
+        msgs.push({ fromSelf: true, message: msg, time: new Date() });
         setMessages(msgs);
+    };
+
+    const createMessages = () => {
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        let newDateNeeded = true;
+        let date = null;
+        const result = [];
+
+        messages.map((msg) => {
+
+            if (date === null) {
+                newDateNeeded = true;
+                date = new Date(msg.time);
+            } else if (date.getDate() !== new Date(msg.time).getDate()) {
+                newDateNeeded = true;
+                date = new Date(msg.time);
+            };
+
+            if (date) {
+
+                const hours = new Date(msg.time).getHours() < 10 ? '0' + new Date(msg.time).getHours() : new Date(msg.time).getHours();
+                const minutes = new Date(msg.time).getMinutes() < 10 ? '0' + new Date(msg.time).getMinutes() : new Date(msg.time).getMinutes();
+
+                result.push(
+                    <div ref={scrollRef} key={uuidv4()}>
+                        {
+                            newDateNeeded && <div className="date">{months[date.getMonth()]} {date.getDate()}, {date.getFullYear()}</div>
+                        }
+                        <div className={`message ${msg.fromSelf ? 'sended' : 'received'}`}>
+                            <div className="content-wrapper">
+                                <p className="time">{hours}:{minutes}</p>
+                                <div className="content">
+                                    <p>
+                                        {msg.message}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            };
+            return newDateNeeded = false;
+        });
+        return result.map(msg => msg);
     };
 
     return (
@@ -75,20 +121,7 @@ export default function ChatContainer({ currentChat, currentUser, socket, online
                         </div>
                         <div className="chat-messages">
                             {
-                                messages.map(msg => {
-                                    return (
-                                        <div ref={scrollRef} key={uuidv4()}>
-                                            <div className={`message ${msg.fromSelf ? 'sended' : 'received'}`}>
-                                                <div className="content">
-                                                    <p>
-                                                        {msg.message}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div> </div>
-                                        </div>
-                                    )
-                                })
+                                createMessages()
                             }
                         </div>
                         <ChatInput handleSendMsg={handleSendMsg} currentChat={currentChat} />
@@ -160,22 +193,38 @@ const Container = styled.div`
                 border-radius: 1rem;
             }
         }
+        .date{
+            color: #fff;
+            font-size: 1rem;
+            padding: .5rem 1rem;
+            border-radius: 1rem;
+            background: #60606a;
+            margin: 0 auto;
+            width: fit-content;
+        }
         .message {
             display: flex;
             align-items: center;
-            .content {
+            .content-wrapper{
                 max-width: 40%;
-                overflow-wrap: break-word;
-                padding: 0.5rem 1rem;
-                font-size: 1.1rem;
-                border-radius: 1rem;
-                color: #d1d1d1;
                 @media screen and (min-width: 720px) and (max-width: 1080px) {
                     max-width: 70%;
                 }
                 @media screen and (max-width: 720px) {
                     max-width: 70%;
                 }
+            }
+            .content {
+                overflow-wrap: break-word;
+                padding: 0.5rem 1rem;
+                font-size: 1.1rem;
+                border-radius: 1rem;
+                color: #d1d1d1;
+            }
+            .time{
+                text-align: right;
+                color: #60606a;
+                width: 100%;
             }
         }
         .sended {

@@ -52,7 +52,7 @@ io.on("connection", (socket) => {
     socket.on("send-msg", (data) => {
         const sendUserSocket = onlineUsers[data.to];
         if (sendUserSocket) {
-            socket.to(sendUserSocket).emit("msg-receive", data.message);
+            socket.to(sendUserSocket).emit("msg-receive", { msg: data.message, time: data.time });
         }
     });
     socket.on("edit-user-profile", (userId) => {
