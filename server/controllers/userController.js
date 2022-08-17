@@ -150,3 +150,54 @@ module.exports.deleteUserFromContacts = async (req, res, next) => {
         next(ex);
     }
 };
+
+module.exports.pinChat = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findByIdAndUpdate(
+            userId,
+            {
+                $push: { 'settings.pins': req.body.id },
+            },
+            { new: true },
+        );
+        if (user) {
+            return res.json({ status: true });
+        };
+    } catch (ex) {
+        next(ex);
+    }
+};
+
+module.exports.unpinChat = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findByIdAndUpdate(
+            userId,
+            {
+                $pull: { 'settings.pins': req.body.id },
+            },
+            { new: true },
+        );
+        if (user) {
+            return res.json({ status: true });
+        };
+    } catch (ex) {
+        next(ex);
+    }
+};
+
+module.exports.getAllPinedChats = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+        const pins = user.settings.pins;
+        if (pins) {
+            res.json({ status: true, pins })
+        } else {
+            res.json({ status: false, msg: 'no pined chats' });
+        }
+    } catch (ex) {
+        next(ex);
+    }
+};

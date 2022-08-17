@@ -7,8 +7,9 @@ import ProfileSettingsBtn from './ProfileSettingsBtn';
 import ContactsContextMenu from './ContactsContextMenu';
 import ProfileSettings from './ProfileSettings';
 import { BsCircleFill } from 'react-icons/bs';
+import { AiTwotonePushpin } from 'react-icons/ai';
 
-export default function Contacts({ contacts, currentUser, changeChat, getCurrentUser, onlineUsers, getContacts, deleteChatFromContacts }) {
+export default function Contacts({ contacts, currentUser, changeChat, getCurrentUser, onlineUsers, getContacts, deleteChatFromContacts, pinedChats, updatePinedChats }) {
     const [currentUserName, setCurrentUserName] = useState(undefined);
     const [currentUserImage, setCurrentUserImage] = useState(undefined);
     const [currentSelected, setCurrentSelected] = useState(undefined);
@@ -83,6 +84,60 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
         deleteChatFromContacts(id);
     };
 
+    const togglePinedChats = () => {
+        updatePinedChats()
+    }
+
+    const createContactList = () => {
+        const pined = [];
+        const rest = [];
+        contacts.map((contact, index) => {
+            if (pinedChats.includes(contact._id)) {
+                pined.push(
+                    <div
+                        className={`contact pined ${contact._id === currentSelected ? 'selected' : ''}`}
+                        key={index}
+                        onClick={() => changeCurrentChat(contact)}
+                        data-id={contact._id}
+                    >
+                        <div className="avatar">
+                            <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt="avatar" />
+                            <div className={`status ${onlineUsers.includes(contact._id) ? 'online' : ''}`}>
+                                <BsCircleFill />
+                            </div>
+                        </div>
+                        <div className="userName">
+                            <h3>{contact.username}</h3>
+                        </div>
+                        <AiTwotonePushpin className="pin" />
+                    </div>
+                )
+            } else {
+                rest.push(
+                    <div
+                        className={`contact ${contact._id === currentSelected ? 'selected' : ''}`}
+                        key={index}
+                        onClick={() => changeCurrentChat(contact)}
+                        data-id={contact._id}
+                    >
+                        <div className="avatar">
+                            <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt="avatar" />
+                            <div className={`status ${onlineUsers.includes(contact._id) ? 'online' : ''}`}>
+                                <BsCircleFill />
+                            </div>
+                        </div>
+                        <div className="userName">
+                            <h3>{contact.username}</h3>
+                        </div>
+                    </div>
+                )
+            }
+        });
+        return (
+            [...pined, ...rest].map(item => item)
+        );
+    };
+
     return (
         <>
             {
@@ -144,23 +199,14 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
                                 )
                             }
                             <div className="contacts" id="user-contact-list">
-                                <ContactsContextMenu targetId='user-contact-list' handleDeleteChat={handleDeleteChat} currentUser={currentUser} />
+                                <ContactsContextMenu
+                                    targetId='user-contact-list'
+                                    handleDeleteChat={handleDeleteChat}
+                                    currentUser={currentUser}
+                                    togglePinedChats={togglePinedChats}
+                                />
                                 {
-                                    contacts.map((contact, index) => {
-                                        return (
-                                            <div className={`contact ${contact._id === currentSelected ? 'selected' : ''}`} key={index} onClick={() => changeCurrentChat(contact)} data-id={contact._id}>
-                                                <div className="avatar">
-                                                    <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt="avatar" />
-                                                    <div className={`status ${onlineUsers.includes(contact._id) ? 'online' : ''}`}>
-                                                        <BsCircleFill />
-                                                    </div>
-                                                </div>
-                                                <div className="userName">
-                                                    <h3>{contact.username}</h3>
-                                                </div>
-                                            </div>
-                                        )
-                                    })
+                                    createContactList()
                                 }
                             </div>
                         </div>
@@ -265,6 +311,13 @@ const Container = styled.div`
             gap: 1rem;
             align-items: center;
             transition: 0.5s ease-in-out;
+            &.pined {
+                .pin{
+                    font-size: 1.2rem;
+                    margin-left: auto;
+                    color: #ffffff59;
+                }
+            }
             .avatar {
                 position: relative;
                 img {

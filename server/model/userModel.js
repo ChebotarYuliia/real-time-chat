@@ -29,7 +29,11 @@ const userSchema = mongoose.Schema({
     contacts: {
         type: Array,
         default: [],
-    }
+    },
+    settings: {
+        pins: Array,
+        theme: String,
+    },
 });
 
 // userSchema.index({ username: 'text', email: 'text' });

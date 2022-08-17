@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from 'styled-components';
-import { allUsersRoute, host } from "../utils/APIRoutes";
+import { allUsersRoute, getAllPinedChats, host } from "../utils/APIRoutes";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
 import ChatContainer from "../components/ChatContainer";
@@ -16,6 +16,7 @@ function Chat() {
     const [currentChat, setCurrentChat] = useState(undefined);
     const [isLoaded, setIsLoaded] = useState(false);
     const [onlineUsers, setOnlineUsers] = useState([]);
+    const [pinedChats, setPinedChats] = useState([]);
 
     useEffect(() => {
         getCurrentUser();
@@ -44,6 +45,7 @@ function Chat() {
 
     useEffect(() => {
         getContacts();
+        getPinedChats()
     }, [currentUser]);
 
     async function getContacts() {
@@ -53,6 +55,15 @@ function Chat() {
                 setContacts(data.data);
             } else {
                 navigate('/setavatar');
+            }
+        };
+    };
+
+    async function getPinedChats() {
+        if (currentUser) {
+            const data = await axios.get(`${getAllPinedChats}/${currentUser._id}`);
+            if (data.status) {
+                setPinedChats(data.data.pins);
             }
         };
     };
@@ -68,10 +79,24 @@ function Chat() {
         getContacts();
     };
 
+    const updatePinedChats = async () => {
+        getPinedChats();
+    };
+
     return (
         <Container>
             <div className="container">
-                <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} getCurrentUser={getCurrentUser} onlineUsers={onlineUsers} getContacts={getContacts} deleteChatFromContacts={deleteChatFromContacts} />
+                <Contacts
+                    contacts={contacts}
+                    currentUser={currentUser}
+                    changeChat={handleChatChange}
+                    getCurrentUser={getCurrentUser}
+                    onlineUsers={onlineUsers}
+                    getContacts={getContacts}
+                    deleteChatFromContacts={deleteChatFromContacts}
+                    pinedChats={pinedChats}
+                    updatePinedChats={updatePinedChats}
+                />
                 {isLoaded && currentChat === undefined ? (
                     <Welcome currentUser={currentUser} />
                 ) : (
