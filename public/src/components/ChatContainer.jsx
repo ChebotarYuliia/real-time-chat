@@ -5,11 +5,12 @@ import ChatInput from './ChatInput';
 import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
 import { getAllMessagesRoute, sendMessageRoute } from '../utils/APIRoutes';
+import { IoIosArrowDown } from 'react-icons/io';
 
 export default function ChatContainer({ currentChat, currentUser, socket, onlineUsers }) {
     const [messages, setMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null);
-    // const [currentDay, setCurrentDay] = useState(null);
+    const [showScrollBtn, setShowScrollBtn] = useState(false);
     const scrollRef = useRef();
 
     useEffect(() => {
@@ -38,8 +39,32 @@ export default function ChatContainer({ currentChat, currentUser, socket, online
     }, [arrivalMessage]);
 
     useEffect(() => {
-        scrollRef.current?.scrollIntoView({ behaviour: 'smooth' });
+        handleScrollDown();
     }, [messages]);
+
+    useEffect(() => {
+        const chat = document.getElementById('chat-messages');
+
+        if (chat) {
+            const toggleVisible = () => {
+                const scrollHeight = chat.scrollHeight;
+                const chatHeight = chat.clientHeight;
+                const scrolled = chat.scrollTop;
+
+                if (scrollHeight - chatHeight - scrolled > 300) {
+                    setShowScrollBtn(true);
+                }
+                else if (scrollHeight - chatHeight - scrolled < 300) {
+                    setShowScrollBtn(false);
+                }
+            };
+            chat.addEventListener('scroll', toggleVisible);
+        }
+    }, []);
+
+    function handleScrollDown() {
+        scrollRef.current?.scrollIntoView({ behaviour: 'smooth' });
+    };
 
     const handleSendMsg = async (msg) => {
         await axios.post(sendMessageRoute, {
@@ -119,11 +144,18 @@ export default function ChatContainer({ currentChat, currentUser, socket, online
                             </div>
                             <Logout socket={socket} />
                         </div>
-                        <div className="chat-messages">
+                        <div className="chat-messages" id="chat-messages">
                             {
                                 createMessages()
                             }
                         </div>
+                        {
+                            showScrollBtn && (
+                                <div className="arrow-scroll" onClick={handleScrollDown}>
+                                    <IoIosArrowDown />
+                                </div>
+                            )
+                        }
                         <ChatInput handleSendMsg={handleSendMsg} currentChat={currentChat} />
                     </Container>
                 )
@@ -182,6 +214,7 @@ const Container = styled.div`
         gap: 1rem;
         overflow: auto;
         height: 70%;
+        scroll-behavior: smooth;
         @media screen and (max-width: 720px) {
             padding: 1rem;
         }
@@ -239,5 +272,20 @@ const Container = styled.div`
                 background-color: #9900ff20;
             }
         }
+    }
+    .arrow-scroll{
+        position: absolute;
+        bottom: calc(15% + 20px);
+        right: 20px;
+        width: 39px;
+        height: 40px;
+        border-radius: 50%;
+        background: #60606a;
+        color: #fff;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
     }
 `;
