@@ -201,3 +201,36 @@ module.exports.getAllPinedChats = async (req, res, next) => {
         next(ex);
     }
 };
+
+module.exports.setAppTheme = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { "settings.theme": req.body.theme },
+            { new: true },
+        );
+        if (user) {
+            return res.json({ status: true });
+        } else {
+            return res.json({ status: false });
+        };
+    } catch (ex) {
+        next(ex);
+    }
+};
+
+module.exports.getAppTheme = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+        const theme = user.settings.theme;
+        if (theme) {
+            return res.json({ status: true, theme });
+        } else {
+            return res.json({ status: false });
+        };
+    } catch (ex) {
+        next(ex);
+    }
+};

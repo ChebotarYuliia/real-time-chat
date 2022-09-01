@@ -1,4 +1,4 @@
-const { register, login, setAvatar, getAllUsers, setSettings, searchForUsers, addNewContact, deleteUserFromContacts, pinChat, unpinChat, getAllPinedChats } = require("../controllers/userController");
+const { register, login, setAvatar, getAllUsers, setSettings, searchForUsers, addNewContact, deleteUserFromContacts, pinChat, unpinChat, getAllPinedChats, setAppTheme, getAppTheme } = require("../controllers/userController");
 
 const router = require('express').Router();
 
@@ -13,5 +13,7 @@ router.post('/deleteuserfromcontacts/:id', deleteUserFromContacts);
 router.post('/pinchat/:id', pinChat);
 router.post('/unpinchat/:id', unpinChat);
 router.get('/getAllPinedChats/:id', getAllPinedChats);
+router.post('/setAppTheme/:id', setAppTheme);
+router.get('/getAppTheme/:id', getAppTheme);
 
 module.exports = router;

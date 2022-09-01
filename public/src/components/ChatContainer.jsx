@@ -176,7 +176,7 @@ const Container = styled.div`
         justify-content: space-between;
         align-items: center;
         padding: 0 2rem;
-        background: #080420;
+        background-color: ${({ theme }) => theme.colors.primary};
         position: absolute;
         top: 0;
         left: 0;
@@ -198,11 +198,11 @@ const Container = styled.div`
                 align-items: center;
                 gap: 10px;
                 h3 {
-                    color: white;
+                    color: ${({ theme }) => theme.colors.font};
                 }
                 .status{
                     font-size: .9rem;
-                    color: #919191;
+                    color: ${({ theme }) => theme.colors.details};
                 }
             }
         }
@@ -215,23 +215,25 @@ const Container = styled.div`
         overflow: auto;
         height: 70%;
         scroll-behavior: smooth;
+        border-left: 1px solid ${({ theme }) => theme.colors.border};
+        background-color: ${({ theme }) => theme.colors.secondary};
         @media screen and (max-width: 720px) {
             padding: 1rem;
         }
         &::-webkit-scrollbar {
             width: 0.2rem;
             &-thumb {
-                background-color: #ffffff39;
+                background-color: ${({ theme }) => theme.colors.primary};
                 width: 0.1rem;
                 border-radius: 1rem;
             }
         }
         .date{
-            color: #fff;
+            color: ${({ theme }) => theme.colors.font};
             font-size: 1rem;
             padding: .5rem 1rem;
             border-radius: 1rem;
-            background: #60606a;
+            background-color: ${({ theme }) => theme.colors.primary};
             margin: 0 auto;
             width: fit-content;
         }
@@ -252,24 +254,27 @@ const Container = styled.div`
                 padding: 0.5rem 1rem;
                 font-size: 1.1rem;
                 border-radius: 1rem;
-                color: #d1d1d1;
+                color: ${({ theme }) => theme.colors.font};
             }
             .time{
                 text-align: right;
-                color: #60606a;
+                color: ${({ theme }) => theme.colors.details};
                 width: 100%;
             }
         }
         .sended {
             justify-content: flex-end;
             .content {
-                background-color: #4f04ff21;
+                background-color: ${({ theme }) => theme.colors.primary};
             }
         }
         .received {
             justify-content: flex-start;
             .content {
-                background-color: #9900ff20;
+                background-color: ${({ theme }) => theme.colors.primary};
+            }
+            .time{
+                text-align: left;
             }
         }
     }
@@ -281,7 +286,7 @@ const Container = styled.div`
         height: 40px;
         border-radius: 50%;
         background: #60606a;
-        color: #fff;
+        color: ${({ theme }) => theme.colors.font};
         font-size: 1.2rem;
         display: flex;
         align-items: center;

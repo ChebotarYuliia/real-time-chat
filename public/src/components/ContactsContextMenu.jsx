@@ -102,20 +102,20 @@ const Container = styled.div`
     position: absolute;
     z-index: 100;
     min-width: 150px;
-    background: #0d0d30;
+    background-color: ${({ theme }) => theme.colors.mainBg};
     border-radius: 5px;
     display: none;
     list-style: none;
     .context-menu-item{
         padding: 10px;
         font-size: 1rem;
-        color: #fff;
+        color: ${({ theme }) => theme.colors.font};
         border-radius: 5px;
         display: flex;
         align-items: center;
         gap: 10px;
         &:hover{
-            background: #6a676743;
+            background-color: ${({ theme }) => theme.colors.accent};
             cursor: pointer;
         }
         &.alert-item{

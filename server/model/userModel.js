@@ -32,9 +32,8 @@ const userSchema = mongoose.Schema({
     },
     settings: {
         pins: Array,
-        theme: String,
+        theme: Object,
     },
 });
 
-// userSchema.index({ username: 'text', email: 'text' });
 module.exports = mongoose.model('Users', userSchema);

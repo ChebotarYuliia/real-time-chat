@@ -6,9 +6,11 @@ import { allUsersRoute, getAllPinedChats, host } from "../utils/APIRoutes";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
 import ChatContainer from "../components/ChatContainer";
+import { light, dark } from "../components/styles/Theme.styled";
+import { setAppTheme, getAppTheme } from '../utils/APIRoutes';
 import { io } from 'socket.io-client';
 
-function Chat() {
+function Chat({ handleThemeChange }) {
     const socket = useRef();
     const navigate = useNavigate();
     const [contacts, setContacts] = useState([]);
@@ -17,6 +19,7 @@ function Chat() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [pinedChats, setPinedChats] = useState([]);
+    const [selectedTheme, setSelectedTheme] = useState(dark);
 
     useEffect(() => {
         getCurrentUser();
@@ -30,6 +33,21 @@ function Chat() {
             setCurrentUser(await JSON.parse(localStorage.getItem('chat-app-user')));
             setIsLoaded(true);
         };
+    };
+
+    useEffect(() => {
+        getTheme();
+    }, [currentUser])
+
+    const getTheme = async () => {
+        if (currentUser) {
+            const res = await axios.get(`${getAppTheme}/${currentUser._id}`);
+            if (res?.data.status) {
+                await setSelectedTheme(res.data.theme);
+            } else {
+                await setSelectedTheme(dark);
+            }
+        }
     };
 
     useEffect(() => {
@@ -68,6 +86,25 @@ function Chat() {
         };
     };
 
+    useEffect(() => {
+        setTheme();
+        handleThemeChange(selectedTheme);
+    }, [selectedTheme]);
+
+    const setTheme = async () => {
+        if (currentUser) {
+            await axios.post(`${setAppTheme}/${currentUser._id}`, { theme: selectedTheme });
+        }
+    };
+
+    const hangleTheme = async (bool) => {
+        if (bool) {
+            await setSelectedTheme(light);
+        } else {
+            await setSelectedTheme(dark);
+        };
+    };
+
     const handleChatChange = (chat) => {
         setCurrentChat(chat);
     };
@@ -96,6 +133,8 @@ function Chat() {
                     deleteChatFromContacts={deleteChatFromContacts}
                     pinedChats={pinedChats}
                     updatePinedChats={updatePinedChats}
+                    handleThemeChange={hangleTheme}
+                    themeName={selectedTheme.name}
                 />
                 {isLoaded && currentChat === undefined ? (
                     <Welcome currentUser={currentUser} />
@@ -115,11 +154,11 @@ const Container = styled.div`
     justify-content: center;
     gap: 1rem;
     align-items: center;
-    background-color: #131324;
+    background-color: ${({ theme }) => theme.colors.mainBg};
     .container {
         height: 90vh;
         width: 85vw;
-        background-color: #00000076;
+        background-color:  ${({ theme }) => theme.colors.primary};
         display: grid;
         grid-template-columns: 25% 75%;
         @media screen and (min-width: 720px) and (max-width: 1080px) {

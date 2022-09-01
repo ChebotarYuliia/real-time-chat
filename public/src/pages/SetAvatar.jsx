@@ -157,7 +157,7 @@ const Container = styled.div`
     align-items: center;
     flex-direction: column;
     gap: 3rem;
-    background-color: #131324;
+    background-color: ${({ theme }) => theme.colors.primary};
     height: 100vh;
     width: 100vw;
 
@@ -165,14 +165,14 @@ const Container = styled.div`
         max-inline-size: 100%;
     }
     .get-back{
-        color: #fff;
+        color: ${({ theme }) => theme.colors.font};
         display: flex;
         align-items: center;
         gap: 5px;
         &:hover{
             cursor: pointer;
             .get-back-btn{
-                border-color: #fff;
+                border-color: ${({ theme }) => theme.colors.font};
             }
         }
         .get-back-btn{
@@ -189,7 +189,7 @@ const Container = styled.div`
 
     .title-container {
         h1 {
-        color: white;
+            color: ${({ theme }) => theme.colors.font};
         }
     }
     .avatars {
@@ -215,7 +215,7 @@ const Container = styled.div`
         }
         }
         .selected {
-        border: 0.4rem solid #4e0eff;
+            border: 0.4rem solid ${({ theme }) => theme.colors.accent};
         }
     }
     .refresh-btn{
@@ -227,7 +227,7 @@ const Container = styled.div`
         display: flex;
         svg{
             font-size: 30px;
-            color: #fff;
+            color: ${({ theme }) => theme.colors.font};
         }
     }
     .animation{
@@ -243,8 +243,8 @@ const Container = styled.div`
         }
     }
     .submit-btn {
-        background-color: #4e0eff;
-        color: white;
+        background-color: ${({ theme }) => theme.colors.accent};
+        color: ${({ theme }) => theme.colors.font};
         padding: 1rem 2rem;
         border: none;
         font-weight: bold;
@@ -253,7 +253,7 @@ const Container = styled.div`
         font-size: 1rem;
         text-transform: uppercase;
         &:hover {
-        background-color: #4e0eff;
+            background-color: ${({ theme }) => theme.colors.accent};
         }
     }
 `;

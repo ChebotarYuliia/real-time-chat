@@ -10,5 +10,7 @@ export const deleteUserFromContacts = `${host}/api/auth/deleteuserfromcontacts`;
 export const pinChat = `${host}/api/auth/pinchat`;
 export const unpinChat = `${host}/api/auth/unpinchat`;
 export const getAllPinedChats = `${host}/api/auth/getallpinedchats`;
+export const setAppTheme = `${host}/api/auth/setapptheme`;
+export const getAppTheme = `${host}/api/auth/getapptheme`;
 export const sendMessageRoute = `${host}/api/messages/addmsg`;
 export const getAllMessagesRoute = `${host}/api/messages/getmsg`;

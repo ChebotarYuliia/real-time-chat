@@ -9,7 +9,7 @@ import ProfileSettings from './ProfileSettings';
 import { BsCircleFill } from 'react-icons/bs';
 import { AiTwotonePushpin } from 'react-icons/ai';
 
-export default function Contacts({ contacts, currentUser, changeChat, getCurrentUser, onlineUsers, getContacts, deleteChatFromContacts, pinedChats, updatePinedChats }) {
+export default function Contacts({ contacts, currentUser, changeChat, getCurrentUser, onlineUsers, getContacts, deleteChatFromContacts, pinedChats, updatePinedChats, handleThemeChange, themeName }) {
     const [currentUserName, setCurrentUserName] = useState(undefined);
     const [currentUserImage, setCurrentUserImage] = useState(undefined);
     const [currentSelected, setCurrentSelected] = useState(undefined);
@@ -93,7 +93,7 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
         const rest = [];
         contacts.map((contact, index) => {
             if (pinedChats.includes(contact._id)) {
-                pined.push(
+                return pined.push(
                     <div
                         className={`contact pined ${contact._id === currentSelected ? 'selected' : ''}`}
                         key={index}
@@ -113,7 +113,7 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
                     </div>
                 )
             } else {
-                rest.push(
+                return rest.push(
                     <div
                         className={`contact ${contact._id === currentSelected ? 'selected' : ''}`}
                         key={index}
@@ -138,6 +138,10 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
         );
     };
 
+    const toggleTheme = (e) => {
+        handleThemeChange(e.target.checked);
+    };
+
     return (
         <>
             {
@@ -146,6 +150,12 @@ export default function Contacts({ contacts, currentUser, changeChat, getCurrent
                         <div className="brand">
                             <img src={Logo} alt="logo" />
                             <h3>snappy</h3>
+                            <div className="theme-switch-wrapper">
+                                <label id="switch" className="theme-switch">
+                                    <input type="checkbox" onChange={toggleTheme} id="theme-slider" checked={themeName === 'dark-theme' ? false : true} />
+                                    <span className="slider"></span>
+                                </label>
+                            </div>
                         </div>
                         <div className="contacts">
                             <div className="search-contact">
@@ -236,7 +246,7 @@ const Container = styled.div`
     display: grid;
     grid-template-rows: 10% 75% 15%;
     overflow: hidden;
-    background-color: #080420;
+    background-color: ${({ theme }) => theme.colors.secondary};
     .brand {
         display: flex;
         align-items: center;
@@ -246,8 +256,62 @@ const Container = styled.div`
             height: 2rem;
         }
         h3 {
-            color: white;
+            color: ${({ theme }) => theme.colors.font};
             text-transform: uppercase;
+        }
+    }
+    .theme-switch-wrapper{
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 14px;
+            }
+        input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: ${({ theme }) => theme.colors.details};
+            transition: 0.4s;
+            border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 25px;
+            width: 25px;
+            left: 0px;
+            bottom: 4px;
+            top: 0;
+            bottom: 0;
+            margin: auto 0;
+            transition: 0.4s;
+            box-shadow: 0 0px 15px #2020203d;
+            background: #fff url('https://i.ibb.co/FxzBYR9/night.png');
+            background-size: 67%;
+            background-repeat: no-repeat;
+            background-position: center;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: ${({ theme }) => theme.colors.accent};
+        }
+        input:focus + .slider {
+            box-shadow: 0 0 1px ${({ theme }) => theme.colors.accent};
+        }
+        input:checked + .slider:before {
+            transform: translateX(24px);
+            background: #fff url('https://i.ibb.co/7JfqXxB/sunny.png');
+            background-repeat: no-repeat;
+            background-position: center;
         }
     }
     .contacts {
@@ -260,7 +324,7 @@ const Container = styled.div`
         &::-webkit-scrollbar {
             width: 0.2rem;
             &-thumb {
-                background-color: #ffffff39;
+                background-color: ${({ theme }) => theme.colors.primary};
                 width: 0.1rem;
                 border-radius: 1rem;
             }
@@ -270,7 +334,7 @@ const Container = styled.div`
             input{
                 border: none;
                 outline: none;
-                color: #fff;
+                color: ${({ theme }) => theme.colors.font};
                 padding: .5rem 1rem;
                 font-size: .9rem;
                 background: transparent;
@@ -278,10 +342,10 @@ const Container = styled.div`
             }
         }
         .add-to-contacts{
-            color: #0a0a13;
+            color: ${({ theme }) => theme.colors.darkText};
             font-size: 1rem;
             padding: 0.3rem;
-            background: #4e0eff;
+            background-color: ${({ theme }) => theme.colors.accent};
             border-radius: 5px;
             cursor: pointer;
             transition: all .3s;
@@ -294,15 +358,14 @@ const Container = styled.div`
             gap: 0.8rem;
             width: 100%;
             padding-bottom: .8rem;
-            border-bottom: 1px solid grey;
+            border-bottom: 1px solid ${({ theme }) => theme.colors.details};
             .no-user-found{
-                color: grey;
+                color: ${({ theme }) => theme.colors.details};
                 font-style: italic;
             }
         }
         .contact {
-            background-color: #ffffff34;
-            color: #ffffff;
+            color: ${({ theme }) => theme.colors.font};
             cursor: pointer;
             width: 90%;
             border-radius: 0.2rem;
@@ -315,7 +378,14 @@ const Container = styled.div`
                 .pin{
                     font-size: 1.2rem;
                     margin-left: auto;
-                    color: #ffffff59;
+                    color: #6060608f;
+                }
+                &.selected{
+                    .status.online{
+                        svg{
+                            color: #fff;
+                        }
+                    }
                 }
             }
             .avatar {
@@ -326,28 +396,28 @@ const Container = styled.div`
                 }
                 .status{
                     position: absolute;
-                    color: #919191;
+                    color: ${({ theme }) => theme.colors.details};
                     font-size: .8rem;
                     bottom: -1px;
                     right: 4px;
                     &.online{
-                        color: #4e0eff;
+                        color: ${({ theme }) => theme.colors.accent};
                     }
                 }
             }
             .username {
                 h3 {
-                    color: white;
+                    color: ${({ theme }) => theme.colors.font};
                 }
             }
         }
         .selected {
-            background-color: #9a86f3;
+            background-color: ${({ theme }) => theme.colors.primary};
         }
     }
 
     .current-user {
-        background-color: #0d0d30;
+        background-color: ${({ theme }) => theme.colors.primary};
         display: flex;
         justify-content: center;
         align-items: center;
@@ -397,7 +467,7 @@ const Container = styled.div`
         }
         .username {
             h2 {
-                color: white;
+                color: ${({ theme }) => theme.colors.font};
             }
         }
         @media screen and (min-width: 720px) and (max-width: 1080px) {
@@ -411,24 +481,24 @@ const Container = styled.div`
         }
         .username-input{
             background-color: transparent;
-            color: white;
+            color: ${({ theme }) => theme.colors.font};
             border: none;
             font-size: 1.2rem;
             border: none;
             outline: none;
             width: 100px;
             padding: 5px 5px 5px 10px;
-            background: #ffffff34;
+            background: ${({ theme }) => theme.colors.details};
             border-radius: 20px;
             font-size: 1rem;
         }
         .controls{
-            color: #fff;
+            color: ${({ theme }) => theme.colors.font};
             div{
                 cursor: pointer;
                 transition: all .3s;
                 &:hover{
-                    color: #4e0eff;
+                    color: ${({ theme }) => theme.colors.accent};
                 }
             }
         }

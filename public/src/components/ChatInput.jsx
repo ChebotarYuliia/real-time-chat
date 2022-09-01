@@ -37,7 +37,6 @@ export default function ChatInput({ handleSendMsg, currentChat }) {
     }, [currentChat]);
 
     const handleEmojiPickerhideShow = () => {
-        inputRef.current.focus();
         setShowEmojiPicker(!showEmojiPicker);
     };
 
@@ -103,7 +102,7 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-around;
-    background-color: #ffffff34;
+    background-color: ${({ theme }) => theme.colors.primary};
     padding: 0 2rem;
     gap: 1rem;
     height: 15%;
@@ -113,26 +112,26 @@ const Container = styled.div`
     .button-container {
         display: flex;
         align-items: center;
-        color: white;
+        color: ${({ theme }) => theme.colors.font};
         gap: 1rem;
         .emoji {
             position: relative;
             svg {
                 font-size: 1.5rem;
-                color: #ffff00c8;
+                color: ${({ theme }) => theme.colors.details};
                 cursor: pointer;
             }
             .emoji-picker-react {
                 position: absolute;
                 top: -350px;
-                background-color: #080420;
-                box-shadow: 0 5px 10px #9a86f3;
-                border-color: #9a86f3;
+                background-color: ${({ theme }) => theme.colors.secondary};
+                box-shadow: 0 5px 10px ${({ theme }) => theme.colors.accent};
+                border-color: ${({ theme }) => theme.colors.accent};
                 .emoji-scroll-wrapper::-webkit-scrollbar {
-                    background-color: #080420;
+                    background-color: ${({ theme }) => theme.colors.secondary};
                     width: 5px;
                     &-thumb {
-                        background-color: #9a86f3;
+                        background-color: ${({ theme }) => theme.colors.accent};
                     }
                 }
             .emoji-categories {
@@ -142,10 +141,10 @@ const Container = styled.div`
             }
             .emoji-search {
                 background-color: transparent;
-                border-color: #9a86f3;
+                border-color: ${({ theme }) => theme.colors.accent};
             }
             .emoji-group:before {
-                background-color: #080420;
+                background-color: ${({ theme }) => theme.colors.secondary};
             }
         }
         }
@@ -159,10 +158,10 @@ const Container = styled.div`
         #chat-main-input {
             -moz-appearance: textfield;
             -webkit-appearance: textfield;
-            display: inline-block;  
+            display: inline-block;
             width: 90%;
             background-color: transparent;
-            color: white;
+            color: ${({ theme }) => theme.colors.font};
             border: none;
             padding-left: 1.5rem;
             font-size: 1rem;
@@ -174,7 +173,7 @@ const Container = styled.div`
             &::-webkit-scrollbar {
                 width: 0.2rem;
                 &-thumb {
-                    background-color: #ffffff39;
+                    background-color: ${({ theme }) => theme.colors.primary};
                     width: 0.1rem;
                     border-radius: 1rem;
                 }
@@ -188,13 +187,13 @@ const Container = styled.div`
             width: 90%;
             height: 30px;
             background-color: transparent;
-            color: white;
+            color: ${({ theme }) => theme.colors.font};
             border: none;
             padding-left: 1rem;
             font-size: 1.2rem;
 
             &::selection {
-                background-color: #9a86f3;
+                color: ${({ theme }) => theme.colors.accent};
             }
             &:focus {
                 outline: none;
@@ -217,7 +216,7 @@ const Container = styled.div`
             }
             svg {
                 font-size: 2rem;
-                color: white;
+                color: ${({ theme }) => theme.colors.font};
             }
         }
     }

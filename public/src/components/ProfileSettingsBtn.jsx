@@ -25,7 +25,7 @@ const Button = styled.button`
     margin-left: auto;
     svg {
         font-size: 1.3rem;
-        color: #ebe7ff;
+        color: ${({ theme }) => theme.colors.details};
         transition: all .5s;
         transform-origin: 50% 50%;
     }

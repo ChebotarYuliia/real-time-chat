@@ -92,7 +92,7 @@ const FormContainer = styled.div`
     justify-content: center;
     gap: 1rem;
     align-items: center;
-    background-color: #131324;
+    background-color: ${({ theme }) => theme.colors.primary};
     .brand{
         display: flex;
         align-items: center;
@@ -102,7 +102,7 @@ const FormContainer = styled.div`
             height: 5rem;
         }
         h1{
-            color: white;
+            color: ${({ theme }) => theme.colors.font};
             text-transform: uppercase;
         }
     }
@@ -110,26 +110,26 @@ const FormContainer = styled.div`
         display: flex;
         flex-direction: column;
         gap: 1rem;
-        background-color: #00000076;
+        background-color: ${({ theme }) => theme.colors.secondary};
         border-radius: 2rem;
         padding: 1.5rem 3rem;
     }
     input {
         background-color: transparent;
         padding: 1rem;
-        border: 0.1rem solid #4e0eff;
+        border: 0.1rem solid ${({ theme }) => theme.colors.accent};
         border-radius: 0.4rem;
-        color: white;
+        color: ${({ theme }) => theme.colors.font};
         width: 100%;
         font-size: 1rem;
         &:focus {
-        border: 0.1rem solid #997af0;
-        outline: none;
+            border: 0.1rem solid ${({ theme }) => theme.colors.accent};
+            outline: none;
         }
     }
     button {
-        background-color: #997af0;
-        color: white;
+        background-color: ${({ theme }) => theme.colors.accent};
+        color: ${({ theme }) => theme.colors.font};
         padding: 1rem 2rem;
         border: none;
         font-weight: bold;
@@ -138,16 +138,16 @@ const FormContainer = styled.div`
         font-size: 1rem;
         text-transform: uppercase;
         &:hover {
-        background-color: #4e0eff;
+            background-color: ${({ theme }) => theme.colors.accent};
         }
     }
     span {
-        color: white;
+        color: ${({ theme }) => theme.colors.font};
         text-transform: uppercase;
         a {
-        color: #4e0eff;
-        text-decoration: none;
-        font-weight: bold;
+            color: ${({ theme }) => theme.colors.accent};
+            text-decoration: none;
+            font-weight: bold;
         }
     }
 `;
